@@ -1,0 +1,39 @@
+Sub UpdateData_LateBinding_FE_BE()
+
+' Declare a variable to hold the ADODB connection
+Dim conn As Object
+
+' Declare variables to hold the front-end and back-end workbooks
+Dim wbFrontEnd As Workbook
+Dim wbBackEnd As Workbook
+
+' Set the variable for the front-end workbook
+Set wbFrontEnd = ThisWorkbook
+
+' Open the back-end workbook using the full path
+Set wbBackEnd = Workbooks.Open("C:\path\to\backend\workbook.xlsx")
+
+' Open a connection to the back-end workbook using ADODB
+' CreateObject function will create an instance of the ADODB.Connection object
+' without the need for a reference to the library
+Set conn = CreateObject("ADODB.Connection")
+
+' Open the connection to the back-end workbook
+' using the Microsoft ACE OLEDB driver
+' provider string and the full path of the workbook
+conn.Open "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & wbBackEnd.FullName & ";Extended Properties=""Excel 12.0 Macro;HDR=YES"";"
+
+' Change the data in the back-end workbook based on data in the front-end workbook
+' Using an SQL statement to update the data in the specific cell
+' using the value in the front-end workbook
+' WHERE A1 <> " & wbFrontEnd.Sheets("Sheet2").Range("B2").Value is used to update only if the value is different
+conn.Execute "UPDATE [Sheet1$] SET A1 = " & wbFrontEnd.Sheets("Sheet2").Range("B2").Value & " WHERE A1 <> " & wbFrontEnd.Sheets("Sheet2").Range("B2").Value
+
+' Close the connection
+conn.Close
+
+' Save and close the back-end workbook
+wbBackEnd.Save
+wbBackEnd.Close
+
+End Sub
