@@ -1,0 +1,21 @@
+Sub MergeSheets()
+    Dim ws1 As Worksheet, ws2 As Worksheet
+    Dim rng1 As Range, rng2 As Range
+    Dim lastRow1 As Long, lastRow2 As Long
+    Dim i As Long
+
+    Set ws1 = ThisWorkbook.Sheets("Sheet1") 'Change "Sheet1" to the name of your first sheet
+    Set ws2 = ThisWorkbook.Sheets("Sheet2") 'Change "Sheet2" to the name of your second sheet
+
+    lastRow1 = ws1.Cells(ws1.Rows.Count, "A").End(xlUp).Row
+    lastRow2 = ws2.Cells(ws2.Rows.Count, "A").End(xlUp).Row
+
+    Set rng1 = ws1.Range("A1:Z" & lastRow1) 'Change "A1:Z" to the range of cells you want to merge from the first sheet
+    Set rng2 = ws2.Range("A1:Z" & lastRow2) 'Change "A1:Z" to the range of cells you want to merge from the second sheet
+
+    For i = 1 To rng1.Rows.Count
+        If IsEmpty(rng1.Cells(i, 1)) Then
+            rng1.Cells(i, 1) = rng2.Cells(i, 1)
+        End If
+    Next i
+End Sub
