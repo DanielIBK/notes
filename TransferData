@@ -1,0 +1,37 @@
+Sub TransferData()
+
+Dim wbSource As Workbook
+Dim wsSource As Worksheet
+Dim wbTarget As Workbook
+Dim wsTarget As Worksheet
+Dim lastRow As Long
+Dim i As Long
+
+'Öffnen der Quellarbeitsmappe "postkorb"
+Set wbSource = Workbooks.Open("C:\Users\UserName\postkorb.xlsx")
+Set wsSource = wbSource.Sheets("Data")
+
+'Öffnen der Zielarbeitsmappe "B2C_Verwaltungsliste"
+Set wbTarget = Workbooks.Open("C:\Users\UserName\B2C_Verwaltungsliste.xlsx")
+Set wsTarget = wbTarget.Sheets("Data")
+
+'Bestimmung der letzten belegten Zeile in der Zielarbeitsmappe
+lastRow = wsTarget.Cells(wsTarget.Rows.Count, "A").End(xlUp).Row
+
+'Schleife zum Übertragen der Daten
+For i = 2 To wsSource.Cells(wsSource.Rows.Count, "A").End(xlUp).Row
+    'Überprüfung, ob die Daten bereits in der Zielarbeitsmappe vorhanden sind
+    If Application.CountIf(wsTarget.Range("A2:A" & lastRow), wsSource.Cells(i, "A").Value) = 0 And _
+    Application.CountIf(wsTarget.Range("B2:B" & lastRow), wsSource.Cells(i, "B").Value) = 0 Then
+        'Übertragen der Daten
+        wsTarget.Cells(lastRow + 1, "A").Value = wsSource.Cells(i, "A").Value
+        wsTarget.Cells(lastRow + 1, "B").Value = wsSource.Cells(i, "B").Value
+        lastRow = lastRow + 1
+    End If
+Next i
+
+'Speichern und Schließen der Arbeitsmappen
+wbSource.Close SaveChanges:=False
+wbTarget.Close SaveChanges:=True
+
+End Sub
